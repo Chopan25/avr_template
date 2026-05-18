@@ -1,0 +1,13 @@
+# CLion e IntelliJ
+.idea/
+cmake-build-*/
+.run/
+
+# Archivos compilados localmente
+*.o
+*.elf
+*.hex
+
+# Mac/Windows (por si acaso)
+.DS_Store
+Thumbs.db
