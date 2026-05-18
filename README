@@ -1,0 +1,108 @@
+# AVR Bare-Metal Project Template (C / Assembly)
+
+A portable, production-ready, containerized development environment for bare-metal AVR microcontrollers (specifically targeting the ATmega328P/Arduino Uno). 
+
+This template containerizes the entire compilation (`avr-gcc`), flashing (`avrdude`), and simulation (`simavr`) toolchain via Docker. It integrates seamlessly with CLion by utilizing pre-configured JetBrains Run Configurations, allowing you to build, run, and visually debug code natively from the IDE on any machine without host-system dependency pollution.
+
+---
+
+## 🏗️ Repository Architecture
+
+The workspace is designed to keep host-specific configurations out of version control while making execution buttons instantly portable.
+
+```text
+.
+├── .idea/
+│  └── runConfigurations/      # Shared IDE execution buttons (Tracked by Git)
+│      ├── 1_Build_Firmware.xml
+│      ├── 2_Flash_Hardware.xml
+│      └── 3_Start_Simulator.xml
+├── CMakeLists.txt              # Unified indexer & language toggle (C vs ASM)
+├── Dockerfile                # Toolchain blueprint (GCC, Avrdude, Simavr, GDB)
+├── bootstrap.sh               # Initial 1-click environment builder
+├── main.c                  # C Boilerplate source
+├── main.S                  # Assembly Boilerplate source
+└── .gitignore                # Keeps local IDE junk out of your repo
+```
+
+---
+
+## 🚀 Quick Start (New Machine Setup)
+
+Follow these steps when cloning this repository onto a fresh machine to be ready to code in under two minutes:
+
+### 1. Clone the Repository
+Clone the template directly as your new project directory:
+```bash
+git clone <repository-url> My_AVR_Project
+cd My_AVR_Project
+```
+
+### 2. Run the Bootstrap Script
+Ensure your local Docker daemon is running, then execute the installation script. This compiles the localized `avr-toolchain` image on your machine:
+```bash
+./bootstrap.sh
+```
+
+### 3. Open in CLion
+1. Launch CLion and select **File > Open**.
+2. Open your project folder (`My_AVR_Project`).
+3. Trust the project and allow CMake to finish parsing.
+
+Because the shared configurations are safely committed within `.idea/runConfigurations/`, CLion will automatically digest them. The top-right dropdown menu will instantly populate with **1. Build Firmware**, **2. Flash Hardware**, and **3. Start Simulator**.
+
+---
+
+## 🛠️ Unified Toolchain Control (C vs Assembly)
+
+You do not need separate environments or distinct templates to switch between C and Assembly. The architecture relies on a single **CMake traffic cop**.
+
+To switch your entire IDE indexer and compilation arguments, open `CMakeLists.txt` and modify line 4:
+
+*  **For Bare-Metal C Mode:**
+    ```cmake
+    option(USE_ASM "Set to ON for Assembly, OFF for C" OFF)
+    ```
+*  **For Pure Assembly Mode:**
+    ```cmake
+    option(USE_ASM "Set to ON for Assembly, OFF for C" ON)
+    ```
+
+When you toggle this flag and reload the CMake project, CLion will completely re-index your code syntax highlighting, error-checking, and auto-completion targeting the chosen language file (`main.c` vs `main.S`). The `1. Build Firmware` button automatically detects this flag and passes the correct optimization parameters to `avr-gcc` inside the container.
+
+---
+
+## 🐛 Step 4 Configuration: Visual Debugger Setup
+
+JetBrains deliberately blocks GDB debugger profiles from being shared across distinct computers due to variable local paths. Therefore, **Step 4 must be configured manually inside CLion once per machine.**
+
+Follow these exact steps to link CLion's visual debugger interface directly to your Dockerized `simavr` instance:
+
+### 1. Build and Start the Simulator Target
+Before configuring the debugger mapping, the target binary must exist, and the simulator must be listening:
+1. Select **1. Build Firmware** from the top-right dropdown and click the green **Play** button.
+2. Select **3. Start Simulator** from the dropdown and click **Play**. 
+   *(The IDE execution panel will stay open/active; this means the virtual microchip is running and listening on localhost port `1234`)*.
+
+### 2. Create the Remote Debug Configuration
+1. In the top-right dropdown menu , click **Edit Configurations...**
+2. Click the **`+`** icon in the top-left corner of the window and select **Remote Debug** from the list.
+3. Configure the parameters exactly as follows:
+   * **Name:** `4. Visual Debugger`
+   * **Debugger:** Select **Bundled GDB** (or your system's avr-gdb if applicable).
+   * **'target remote' args:** `localhost:1234`
+    * **Symbol file:** Click the `...` folder icon and select the **`firmware.elf`** file located inside your main project root folder (generated during Step 1).
+   * **Sysroot:** *Leave empty.*
+
+4. Click **Apply** and then **OK**.
+
+### 3. How to Execute a Visual Debug Session
+Now that the pipeline is completely wired, your development lifecycle looks like this:
+
+1. **Modify your code** in `main.c` or `main.S`.
+2. Run **1. Build Firmware** (Green Play Arrow) to compile the changes.
+3. Run **3. Start Simulator** (Green Play Arrow) to load the virtual chip.
+4. Set your breakpoints in the code margins of your source files.
+5. Select **4. Visual Debugger** from the dropdown and click the **Green Bug Icon (Debug)**.
+
+CLion will immediately halt execution at the reset vector or your chosen breakpoint. You can now use the IDE's visual step-over arrows, inspect hardware register modifications on the fly, and trace machine loops directly within high-level code lines.)
