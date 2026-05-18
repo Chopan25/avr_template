@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="2. Flash Hardware" type="ShConfigurationType">
+    <option name="SCRIPT_TEXT" value="docker run --rm --device=/dev/ttyACM0:/dev/ttyACM0 -v &quot;$PWD&quot;:/src -w /src avr-toolchain avrdude -F -V -c arduino -p m328p -P /dev/ttyACM0 -b 115200 -U flash:w:firmware.hex:i" />
+    <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="EXECUTE_IN_TERMINAL" value="true" />
+    <method v="2" />
+  </configuration>
+</component>

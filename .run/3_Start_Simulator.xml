@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="3. Start Simulator" type="ShConfigurationType">
+    <option name="SCRIPT_TEXT" value="docker run --rm -p 1234:1234 -v &quot;$PWD&quot;:/src -w /src avr-toolchain simavr -m atmega328p -f 16000000 -g firmware.elf" />
+    <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="EXECUTE_IN_TERMINAL" value="true" />
+    <method v="2" />
+  </configuration>
+</component>
