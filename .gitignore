@@ -5,4 +5,4 @@ cmake-build-*/
 *.hex
 
 # Ensure the .run folder is ALWAYS included in Git tracking
-!.run/
+!.idea/sunConfigurations/*
