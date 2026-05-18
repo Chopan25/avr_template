@@ -2,7 +2,16 @@
   <configuration default="false" name="1. Build Firmware" type="ShConfigurationType">
     <option name="SCRIPT_TEXT" value="if [ -f &quot;main.S&quot; ] &amp;&amp; grep -q &quot;USE_ASM \&quot;Set to ON for Assembly, OFF for C\&quot; ON&quot; CMakeLists.txt; then COMPILER_ARGS=&quot;avr-gcc -g -mmcu=atmega328p -DF_CPU=16000000UL -x assembler-with-cpp -c main.S -o main.o&quot;; else COMPILER_ARGS=&quot;avr-gcc -g -Os -mmcu=atmega328p -DF_CPU=16000000UL -c main.c -o main.o&quot;; fi &amp;&amp; docker run --rm -v &quot;$PWD&quot;:/src -w /src avr-toolchain sh -c &quot;$COMPILER_ARGS &amp;&amp; avr-gcc -mmcu=atmega328p main.o -o firmware.elf &amp;&amp; avr-objcopy -O ihex -R .eeprom firmware.elf firmware.hex&quot;" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+    <option name="SCRIPT_PATH" value="" />
+    <option name="SCRIPT_OPTIONS" value="" />
+    <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+    <option name="SCRIPT_WORKING_DIRECTORY" value="" />
+    <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+    <option name="INTERPRETER_PATH" value="" />
+    <option name="INTERPRETER_OPTIONS" value="" />
     <option name="EXECUTE_IN_TERMINAL" value="true" />
+    <option name="EXECUTE_SCRIPT_FILE" value="false" />
+    <envs />
     <method v="2" />
   </configuration>
 </component>
